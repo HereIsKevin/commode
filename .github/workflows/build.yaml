@@ -1,0 +1,39 @@
+name: Build Node.js binaries
+run-name: Build Node.js ${{ inputs.node_version }} binary for macOS ARM64
+
+on:
+  workflow_dispatch:
+    inputs:
+      node_version:
+        description: Node.js version
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    name: Build and release Node.js binaries
+    runs-on: macos-15
+    steps:
+      - name: Download and extract source
+        run: |
+          curl --remote-name https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz
+          tar --extract --file ./node-${{ inputs.node_version }}.tar.gz
+
+      - name: Free space before building
+        run: sudo rm -rf /Users/runner/Library/Android/sdk/
+
+      - name: Build binary
+        run: |
+          ./configure --dest-cpu=arm64 --dest-os=mac --enable-lto --shared-zlib --without-intl --without-amaro --without-npm --without-node-options --without-sqlite --without-inspector
+          make -j2
+          cp ./out/Release/node ../node-${{ inputs.node_version }}-darwin-arm64
+        working-directory: ./node-${{ inputs.node_version }}/
+
+      - name: Release binary
+        uses: softprops/action-gh-release@v2.4.1
+        with:
+          files: ./node-*
+          tag_name: ${{ inputs.node_version }}
