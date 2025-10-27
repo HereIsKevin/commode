@@ -35,5 +35,5 @@ jobs:
       - name: Release binary
         uses: softprops/action-gh-release@v2.4.1
         with:
-          files: ./node-*
+          files: ./node-${{ inputs.node_version }}-darwin-arm64
           tag_name: ${{ inputs.node_version }}
