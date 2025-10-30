@@ -23,7 +23,7 @@ jobs:
           tar --extract --file ./node-${{ inputs.node_version }}.tar.gz
 
       - name: Free space before building
-        run: sudo rm -rf /Users/runner/Library/Android/sdk/
+        run: sudo rm -rf $ANDROID_SDK_ROOT
 
       - name: Build binary
         run: |
