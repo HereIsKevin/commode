@@ -22,6 +22,15 @@ jobs:
           curl --remote-name https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz
           tar --extract --file ./node-${{ inputs.node_version }}.tar.gz
 
+      - name: Clone patch repository
+        uses: actions/checkout@v6
+        with:
+          path: ./commode/
+
+      - name: Apply patches
+        run: git apply ../commode/*.patch
+        working-directory: ./node-${{ inputs.node_version }}/
+
       - name: Free space before building
         run: sudo rm -rf $ANDROID_SDK_ROOT
 

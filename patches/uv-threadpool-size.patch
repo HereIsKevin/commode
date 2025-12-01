@@ -1,0 +1,15 @@
+diff --git a/deps/uv/src/threadpool.c b/deps/uv/src/threadpool.c
+index 98d81cc7b6a4eda182dd82faea4a76e34ae2be26..2abad0f26f05148f1c842df4e7da2f561cc57bb3 100644
+--- a/deps/uv/src/threadpool.c
++++ b/deps/uv/src/threadpool.c
+@@ -197,7 +197,9 @@ static void init_threads(void) {
+   const char* val;
+   uv_sem_t sem;
+ 
+-  nthreads = ARRAY_SIZE(default_threads);
++  nthreads = uv_available_parallelism();
++  if (nthreads < ARRAY_SIZE(default_threads))
++    nthreads = ARRAY_SIZE(default_threads);
+   val = getenv("UV_THREADPOOL_SIZE");
+   if (val != NULL)
+     nthreads = atoi(val);
