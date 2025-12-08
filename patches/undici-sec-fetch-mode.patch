@@ -1,0 +1,35 @@
+diff --git a/deps/undici/src/lib/web/fetch/util.js b/deps/undici/src/lib/web/fetch/util.js
+index b7086c4799e1efbfd06c21d1e004c714903032d0..eb39062753c98fa89c46cd8e84ce263d25327c4a 100644
+--- a/deps/undici/src/lib/web/fetch/util.js
++++ b/deps/undici/src/lib/web/fetch/util.js
+@@ -236,13 +236,13 @@ function appendFetchMetadata (httpRequest) {
+   //  TODO
+ 
+   //  2. Let header be a Structured Header whose value is a token.
+-  let header = null
++  // let header = null
+ 
+   //  3. Set header’s value to r’s mode.
+-  header = httpRequest.mode
++  // header = httpRequest.mode
+ 
+   //  4. Set a structured field value `Sec-Fetch-Mode`/header in r’s header list.
+-  httpRequest.headersList.set('sec-fetch-mode', header, true)
++  // httpRequest.headersList.set('sec-fetch-mode', header, true)
+ 
+   //  https://w3c.github.io/webappsec-fetch-metadata/#sec-fetch-site-header
+   //  TODO
+diff --git a/deps/undici/undici.js b/deps/undici/undici.js
+index 6481479d3ed286d4262c8b57a9ebd8b6f5df467a..da4f1889cee06c167f304750cb65e1ab771c0586 100644
+--- a/deps/undici/undici.js
++++ b/deps/undici/undici.js
+@@ -4956,9 +4956,6 @@ var require_util2 = __commonJS({
+     }
+     __name(TAOCheck, "TAOCheck");
+     function appendFetchMetadata(httpRequest) {
+-      let header = null;
+-      header = httpRequest.mode;
+-      httpRequest.headersList.set("sec-fetch-mode", header, true);
+     }
+     __name(appendFetchMetadata, "appendFetchMetadata");
+     function appendRequestOriginHeader(request) {
