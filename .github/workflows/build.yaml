@@ -37,7 +37,7 @@ jobs:
           build-args: node_version=${{ inputs.node_version }}
           context: ./
           file: ./commode/Dockerfile
-          output: type=local, dest=./
+          outputs: type=local, dest=./
 
       - name: Upload artifact
         uses: actions/upload-artifact@v5
