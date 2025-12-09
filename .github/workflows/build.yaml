@@ -38,6 +38,7 @@ jobs:
           context: ./
           file: ./commode/Dockerfile
           outputs: type=local, dest=./
+          platforms: linux/amd64
 
       - name: Upload artifact
         uses: actions/upload-artifact@v5
@@ -71,7 +72,7 @@ jobs:
 
       - name: Build binary
         run: |
-          ./configure --dest-cpu=arm64 --dest-os=mac --enable-lto --shared-zlib --without-intl --without-amaro --without-npm --without-node-options --without-inspector
+          ./configure --enable-lto --shared-zlib --without-intl --without-amaro --without-npm --without-node-options --without-inspector
           make -j2
         working-directory: ./node-${{ inputs.node_version }}/
 
