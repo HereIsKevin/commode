@@ -15,9 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Download and extract source
-        run: |
-          curl --remote-name https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz
-          tar --extract --file ./node-${{ inputs.node_version }}.tar.gz
+        run: curl https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz | tar --extract
 
       - name: Clone patch repository
         uses: actions/checkout@v6
@@ -51,9 +49,7 @@ jobs:
     runs-on: macos-15
     steps:
       - name: Download and extract source
-        run: |
-          curl --remote-name https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz
-          tar --extract --file ./node-${{ inputs.node_version }}.tar.gz
+        run: curl https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz | tar --extract
 
       - name: Clone patch repository
         uses: actions/checkout@v6
