@@ -1,5 +1,5 @@
-name: Build Node.js binaries
-run-name: Build Node.js ${{ inputs.node_version }} binary for macOS ARM64
+name: Build and publish binaries
+run-name: Build and publish binaries for Node.js ${{ inputs.node_version }}
 
 on:
   workflow_dispatch:
@@ -9,12 +9,44 @@ on:
         required: true
         type: string
 
-permissions:
-  contents: write
-
 jobs:
-  build_and_release:
-    name: Build and release Node.js binaries
+  build_linux:
+    name: Build Linux x64 binaries
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download and extract source
+        run: |
+          curl --remote-name https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz
+          tar --extract --file ./node-${{ inputs.node_version }}.tar.gz
+
+      - name: Clone patch repository
+        uses: actions/checkout@v6
+        with:
+          path: ./commode/
+
+      - name: Apply patches
+        run: git apply ../commode/patches/*.patch
+        working-directory: ./node-${{ inputs.node_version }}/
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build binary
+        uses: docker/build-push-action@v6
+        with:
+          build-args: node_version=${{ inputs.node_version }}
+          context: ./
+          file: ./commode/Dockerfile
+          output: type=local, dest=./
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: node-${{ inputs.node_version }}-linux-x64
+          path: ./node
+
+  build_macos:
+    name: Build macOS arm64 binaries
     runs-on: macos-15
     steps:
       - name: Download and extract source
@@ -28,21 +60,39 @@ jobs:
           path: ./commode/
 
       - name: Apply patches
-        run: git apply ../commode/*.patch
+        run: git apply ../commode/patches/*.patch
         working-directory: ./node-${{ inputs.node_version }}/
 
       - name: Free space before building
         run: sudo rm -rf $ANDROID_SDK_ROOT
 
+      - name: Set up Xcode toolchain
+        run: sudo xcode-select --switch /Applications/Xcode_26.1.app
+
       - name: Build binary
         run: |
-          ./configure --dest-cpu=arm64 --dest-os=mac --enable-lto --shared-zlib --without-intl --without-amaro --without-npm --without-node-options --without-sqlite --without-inspector
+          ./configure --dest-cpu=arm64 --dest-os=mac --enable-lto --shared-zlib --without-intl --without-amaro --without-npm --without-node-options --without-inspector
           make -j2
-          cp ./out/Release/node ../node-${{ inputs.node_version }}-darwin-arm64
         working-directory: ./node-${{ inputs.node_version }}/
 
-      - name: Release binary
-        uses: softprops/action-gh-release@v2.4.1
+      - name: Upload artifact
+        uses: actions/upload-artifact@v5
         with:
-          files: ./node-${{ inputs.node_version }}-darwin-arm64
+          name: node-${{ inputs.node_version }}-darwin-arm64
+          path: ./node-${{ inputs.node_version }}/out/Release/node
+
+  publish:
+    name: Publish binaries to release
+    permissions:
+      contents: write
+    needs: [build_linux, build_macos]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v6
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./node-${{ inputs.node_version }}-*
           tag_name: ${{ inputs.node_version }}
