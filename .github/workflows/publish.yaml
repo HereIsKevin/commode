@@ -27,6 +27,7 @@ jobs:
           path: ./artifacts/
           pattern: node-${{ inputs.node_version }}-*
           merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ inputs.run_id }}
 
       - name: Publish release
