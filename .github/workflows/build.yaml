@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Download and extract source
-        run: curl https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz | tar --extract
+        run: curl https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz | tar --extract --gunzip
 
       - name: Clone patch repository
         uses: actions/checkout@v6
