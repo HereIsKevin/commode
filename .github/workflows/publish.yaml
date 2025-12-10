@@ -30,6 +30,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ inputs.run_id }}
 
+      - name: List artifacts
+        run: ls ./artifacts/
+
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
