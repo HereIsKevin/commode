@@ -12,7 +12,8 @@ COPY ./ ./
 WORKDIR /root/node-$node_version/
 RUN source /opt/rh/gcc-toolset-15/enable && \
     ./configure --enable-lto --without-intl --without-amaro --without-npm --without-node-options --without-inspector && \
-    make -j4
+    make -j4 && \
+    strip ./out/Release/node
 
 # Copy Node.js binary to blank stage for export.
 FROM scratch

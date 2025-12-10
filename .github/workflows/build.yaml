@@ -70,6 +70,7 @@ jobs:
         run: |
           ./configure --enable-lto --shared-zlib --without-intl --without-amaro --without-npm --without-node-options --without-inspector
           make -j2
+          strip -x ./out/Release/node
         working-directory: ./node-${{ inputs.node_version }}/
 
       - name: Upload artifact
