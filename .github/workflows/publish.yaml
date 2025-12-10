@@ -26,6 +26,7 @@ jobs:
           path: ./artifacts/
           pattern: node-${{ inputs.node_version }}-*
           merge-multiple: true
+          run-id: ${{ inputs.run_id }}
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
