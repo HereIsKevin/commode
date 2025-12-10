@@ -95,12 +95,12 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v6
         with:
-          path: ./
+          path: ./artifacts/
           pattern: node-${{ inputs.node_version }}-*
           merge-multiple: true
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./node-${{ inputs.node_version }}-*
+          files: ./artifacts/*
           tag_name: ${{ inputs.node_version }}
