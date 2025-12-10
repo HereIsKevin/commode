@@ -40,11 +40,14 @@ jobs:
           outputs: type=local, dest=./
           platforms: linux/amd64
 
+      - name: Rename binary
+        run: mv ./node ./node-${{ inputs.node_version }}-linux-x64
+
       - name: Upload artifact
         uses: actions/upload-artifact@v5
         with:
           name: node-${{ inputs.node_version }}-linux-x64
-          path: ./node
+          path: ./node-${{ inputs.node_version }}-linux-x64
 
   build_macos:
     name: Build macOS arm64 binary
@@ -77,11 +80,14 @@ jobs:
           strip -x ./out/Release/node
         working-directory: ./node-${{ inputs.node_version }}/
 
+      - name: Rename binary
+        run: mv ./node-${{ inputs.node_version }}/out/Release/node ./node-${{ inputs.node_version }}-darwin-arm64
+
       - name: Upload artifact
         uses: actions/upload-artifact@v5
         with:
           name: node-${{ inputs.node_version }}-darwin-arm64
-          path: ./node-${{ inputs.node_version }}/out/Release/node
+          path: ./node-${{ inputs.node_version }}-darwin-arm64
 
   publish:
     name: Publish binaries to release
@@ -95,12 +101,12 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v6
         with:
-          path: ./artifacts/
+          path: ./
           pattern: node-${{ inputs.node_version }}-*
           merge-multiple: true
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          files: ./artifacts/*
+          files: ./node-${{ inputs.node_version }}-*
           tag_name: ${{ inputs.node_version }}
