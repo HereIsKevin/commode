@@ -1,4 +1,4 @@
-FROM redhat/ubi8:8.10 AS build
+FROM rockylinux/rockylinux:8 AS build
 ARG node_version
 
 # Install dependencies.
@@ -8,7 +8,7 @@ RUN dnf install --assumeyes gcc-toolset-15 make python3.12 python3.12-pip
 WORKDIR /root/
 COPY ./ ./
 
-# Build Node.js binary
+# Build Node.js binary.
 WORKDIR /root/node-$node_version/
 RUN source /opt/rh/gcc-toolset-15/enable && \
     ./configure --enable-lto --without-intl --without-amaro --without-npm --without-node-options --without-inspector && \
