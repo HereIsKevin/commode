@@ -11,7 +11,9 @@ on:
 
 jobs:
   build_linux:
-    name: Build Linux x64 binaries
+    name: Build Linux x64 binary
+    permissions:
+      contents: read
     runs-on: ubuntu-24.04
     steps:
       - name: Download and extract source
@@ -45,7 +47,9 @@ jobs:
           path: ./node
 
   build_macos:
-    name: Build macOS arm64 binaries
+    name: Build macOS arm64 binary
+    permissions:
+      contents: read
     runs-on: macos-15
     steps:
       - name: Download and extract source
@@ -83,11 +87,17 @@ jobs:
     name: Publish binaries to release
     permissions:
       contents: write
-    needs: [build_linux, build_macos]
+    needs:
+      - build_linux
+      - build_macos
     runs-on: ubuntu-24.04
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v6
+        with:
+          path: ./
+          pattern: node-${{ inputs.node_version }}-*
+          merge-multiple: true
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
