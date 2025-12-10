@@ -1,4 +1,4 @@
-FROM rockylinux/rockylinux:8 AS build
+FROM almalinux:8 AS build
 ARG node_version
 
 # Install dependencies.
