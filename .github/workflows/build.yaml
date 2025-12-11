@@ -28,6 +28,12 @@ jobs:
         run: git apply ../commode/patches/*.patch
         working-directory: ./node-${{ inputs.node_version }}/
 
+      - name: Minify bundled JavaScript
+        run: |
+          npm ci
+          node ./scripts/minify.js ../node-${{ inputs.node_version }}/
+        working-directory: ./commode/
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -66,6 +72,12 @@ jobs:
       - name: Apply patches
         run: git apply ../commode/patches/*.patch
         working-directory: ./node-${{ inputs.node_version }}/
+
+      - name: Minify bundled JavaScript
+        run: |
+          npm ci
+          node ./scripts/minify.js ../node-${{ inputs.node_version }}/
+        working-directory: ./commode/
 
       - name: Free space before building
         run: sudo rm -rf $ANDROID_SDK_ROOT
