@@ -44,7 +44,7 @@ jobs:
         run: mv ./node ./node-${{ inputs.node_version }}-linux-x64
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: node-${{ inputs.node_version }}-linux-x64
           path: ./node-${{ inputs.node_version }}-linux-x64
@@ -93,7 +93,7 @@ jobs:
         run: mv ./node-${{ inputs.node_version }}/out/Release/node ./node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
           path: ./node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
@@ -108,7 +108,7 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ./
           pattern: node-${{ inputs.node_version }}-*
