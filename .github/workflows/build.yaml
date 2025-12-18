@@ -50,10 +50,19 @@ jobs:
           path: ./node-${{ inputs.node_version }}-linux-x64
 
   build_macos:
-    name: Build macOS arm64 binary
+    strategy:
+      matrix:
+        include:
+          - os: macos-15
+            arch: arm64
+            jobs: 2
+          - os: macos-15-intel
+            arch: x64
+            jobs: 4
+    name: Build macOS ${{ matrix.arch }} binary
     permissions:
       contents: read
-    runs-on: macos-15
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Download and extract source
         run: curl https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz | tar --extract
@@ -76,18 +85,18 @@ jobs:
       - name: Build binary
         run: |
           ./configure --enable-lto --shared-zlib --without-intl --without-amaro --without-npm --without-node-options --without-inspector
-          make -j2
+          make -j${{ matrix.jobs }}
           strip -x ./out/Release/node
         working-directory: ./node-${{ inputs.node_version }}/
 
       - name: Rename binary
-        run: mv ./node-${{ inputs.node_version }}/out/Release/node ./node-${{ inputs.node_version }}-darwin-arm64
+        run: mv ./node-${{ inputs.node_version }}/out/Release/node ./node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v5
         with:
-          name: node-${{ inputs.node_version }}-darwin-arm64
-          path: ./node-${{ inputs.node_version }}-darwin-arm64
+          name: node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
+          path: ./node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
 
   publish:
     name: Publish binaries to release
