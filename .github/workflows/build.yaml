@@ -11,10 +11,19 @@ on:
 
 jobs:
   build_linux:
-    name: Build Linux x64 binary
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            arch: x64
+            platform: linux/amd64
+          - os: ubuntu-24.04-arm
+            arch: arm64
+            platform: linux/arm64
+    name: Build Linux ${{ matrix.arch }} binary
     permissions:
       contents: read
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Download and extract source
         run: curl https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz | tar --extract --gunzip
@@ -38,16 +47,16 @@ jobs:
           context: ./
           file: ./commode/Dockerfile
           outputs: type=local, dest=./
-          platforms: linux/amd64
+          platforms: ${{ matrix.platform }}
 
       - name: Rename binary
-        run: mv ./node ./node-${{ inputs.node_version }}-linux-x64
+        run: mv ./node ./node-${{ inputs.node_version }}-linux-${{ matrix.arch }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
-          name: node-${{ inputs.node_version }}-linux-x64
-          path: ./node-${{ inputs.node_version }}-linux-x64
+          name: node-${{ inputs.node_version }}-linux-${{ matrix.arch }}
+          path: ./node-${{ inputs.node_version }}-linux-${{ matrix.arch }}
 
   build_macos:
     strategy:
