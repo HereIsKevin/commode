@@ -2,7 +2,7 @@ FROM almalinux:8 AS build
 ARG node_version
 
 # Install dependencies.
-RUN dnf install --assumeyes gcc-toolset-15 make python3.12 python3.12-pip
+RUN dnf install --assumeyes gcc-toolset-15 make python3.12
 
 # Copy context to container.
 WORKDIR /root/
