@@ -57,6 +57,7 @@ jobs:
         with:
           name: node-${{ inputs.node_version }}-linux-${{ matrix.arch }}
           path: ./node-${{ inputs.node_version }}-linux-${{ matrix.arch }}
+          if-no-files-found: error
 
   build_macos:
     strategy:
@@ -106,6 +107,50 @@ jobs:
         with:
           name: node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
           path: ./node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
+          if-no-files-found: error
+
+  build_windows:
+    strategy:
+      matrix:
+        include:
+          - os: windows-2025
+            arch: x64
+          - os: windows-11-arm
+            arch: arm64
+    name: Build Windows ${{ matrix.arch }} addon
+    permissions:
+      contents: read
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Download and extract source
+        run: curl https://nodejs.org/dist/${{ inputs.node_version }}/node-${{ inputs.node_version }}.tar.gz | tar --extract
+
+      - name: Clone patch repository
+        uses: actions/checkout@v6
+        with:
+          path: ./commode/
+
+      - name: Apply patches
+        run: Resolve-Path -Path ..\commode\patches\*.patch | ForEach-Object -Process { git apply $_ }
+        working-directory: ./node-${{ inputs.node_version }}/
+
+      - name: Build binary
+        run: |
+          . "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Launch-VsDevShell.ps1"
+          .\vcbuild.bat nonpm ltcg intl-none no-NODE-OPTIONS
+        working-directory: ./node-${{ inputs.node_version }}/
+        env:
+          config_flags: --without-amaro --without-inspector
+
+      - name: Rename binary
+        run: Move-Item -Path .\node-${{ inputs.node_version }}\out\Release\node.exe -Destination .\node-${{ inputs.node_version }}-win32-${{ matrix.arch }}.exe
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: node-${{ inputs.node_version }}-win32-${{ matrix.arch }}
+          path: ./node-${{ inputs.node_version }}-win32-${{ matrix.arch }}.exe
+          if-no-files-found: error
 
   publish:
     name: Publish binaries to release
@@ -114,6 +159,7 @@ jobs:
     needs:
       - build_linux
       - build_macos
+      - build_windows
     runs-on: ubuntu-slim
     steps:
       - name: Download artifacts
