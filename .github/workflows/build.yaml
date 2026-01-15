@@ -115,8 +115,10 @@ jobs:
         include:
           - os: windows-2025
             arch: x64
+            vs_arch: amd64
           - os: windows-11-arm
             arch: arm64
+            vs_arch: arm64
     name: Build Windows ${{ matrix.arch }} addon
     permissions:
       contents: read
@@ -136,7 +138,7 @@ jobs:
 
       - name: Build binary
         run: |
-          . "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Launch-VsDevShell.ps1"
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Launch-VsDevShell.ps1" -Arch ${{ matrix.vs_arch }}
           .\vcbuild.bat nonpm ltcg intl-none no-NODE-OPTIONS
         working-directory: .\node-${{ inputs.node_version }}\
         env:
