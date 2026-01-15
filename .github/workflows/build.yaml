@@ -119,7 +119,7 @@ jobs:
           - os: windows-11-arm
             arch: arm64
             vs_arch: arm64
-    name: Build Windows ${{ matrix.arch }} addon
+    name: Build Windows ${{ matrix.arch }} binary
     permissions:
       contents: read
     runs-on: ${{ matrix.os }}
