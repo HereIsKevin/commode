@@ -90,7 +90,7 @@ jobs:
         run: sudo rm -rf $ANDROID_SDK_ROOT
 
       - name: Set up Xcode toolchain
-        run: sudo xcode-select --switch /Applications/Xcode_26.1.app
+        run: sudo xcode-select --switch /Applications/Xcode_26.2.app
 
       - name: Build binary
         run: |
