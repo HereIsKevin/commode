@@ -94,7 +94,7 @@ jobs:
 
       - name: Build binary
         run: |
-          ./configure --enable-lto --shared-zlib --without-intl --without-amaro --without-npm --without-node-options --without-inspector
+          ./configure --enable-lto --shared-zlib --without-intl --without-amaro --without-lief --without-npm --without-node-options --without-inspector
           make -j${{ matrix.jobs }}
           strip -x ./out/Release/node
         working-directory: ./node-${{ inputs.node_version }}/
@@ -142,7 +142,7 @@ jobs:
           .\vcbuild.bat ${{ matrix.arch }} nonpm ltcg intl-none no-NODE-OPTIONS
         working-directory: .\node-${{ inputs.node_version }}\
         env:
-          config_flags: --without-amaro --without-inspector
+          config_flags: --without-amaro --without-lief --without-inspector
 
       - name: Rename binary
         run: Move-Item -Path .\node-${{ inputs.node_version }}\out\Release\node.exe -Destination .\node-${{ inputs.node_version }}-win32-${{ matrix.arch }}.exe

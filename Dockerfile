@@ -11,7 +11,7 @@ COPY ./ ./
 # Build Node.js binary.
 WORKDIR /root/node-$node_version/
 RUN source /opt/rh/gcc-toolset-15/enable && \
-    ./configure --enable-lto --without-intl --without-amaro --without-npm --without-node-options --without-inspector && \
+    ./configure --enable-lto --without-intl --without-amaro --without-lief --without-npm --without-node-options --without-inspector && \
     make -j4 && \
     strip ./out/Release/node
 
