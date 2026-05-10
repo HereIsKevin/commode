@@ -1,5 +1,5 @@
 diff --git a/deps/undici/src/lib/web/fetch/util.js b/deps/undici/src/lib/web/fetch/util.js
-index 775ef296db26226c45359c2076b22740f6bea426..aac7af2cfad6bef1ce8bdc569d26f9b9952cca53 100644
+index fe63cb3a9b07e57198f08d6237d2b7b39bfd057d..41fa934bbcaf62d29c605906f55497de69522b15 100644
 --- a/deps/undici/src/lib/web/fetch/util.js
 +++ b/deps/undici/src/lib/web/fetch/util.js
 @@ -237,13 +237,13 @@ function appendFetchMetadata (httpRequest) {
@@ -20,10 +20,10 @@ index 775ef296db26226c45359c2076b22740f6bea426..aac7af2cfad6bef1ce8bdc569d26f9b9
    //  https://w3c.github.io/webappsec-fetch-metadata/#sec-fetch-site-header
    //  TODO
 diff --git a/deps/undici/undici.js b/deps/undici/undici.js
-index 19915b8029af9fd6a50837eb55c168585a0fba48..8a2f9dd1d9c74d2b3c0287d93ecc2c71afef9c39 100644
+index 22ec3444e6ec307dde88be3be4a63e20d2ee0133..2e3297550204e39ee99d3d059bd235de62d9570e 100644
 --- a/deps/undici/undici.js
 +++ b/deps/undici/undici.js
-@@ -5398,9 +5398,9 @@ var require_util2 = __commonJS({
+@@ -5389,9 +5389,9 @@ var require_util2 = __commonJS({
      }
      __name(TAOCheck, "TAOCheck");
      function appendFetchMetadata(httpRequest) {

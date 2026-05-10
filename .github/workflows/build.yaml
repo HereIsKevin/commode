@@ -53,11 +53,11 @@ jobs:
         run: mv ./node ./node-${{ inputs.node_version }}-linux-${{ matrix.arch }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
-          name: node-${{ inputs.node_version }}-linux-${{ matrix.arch }}
           path: ./node-${{ inputs.node_version }}-linux-${{ matrix.arch }}
           if-no-files-found: error
+          archive: false
 
   build_macos:
     strategy:
@@ -90,11 +90,11 @@ jobs:
         run: sudo rm -rf $ANDROID_SDK_ROOT
 
       - name: Set up Xcode toolchain
-        run: sudo xcode-select --switch /Applications/Xcode_26.2.app
+        run: sudo xcode-select --switch /Applications/Xcode_26.3.app
 
       - name: Build binary
         run: |
-          ./configure --enable-lto --shared-zlib --without-intl --without-amaro --without-lief --without-npm --without-node-options --without-inspector
+          ./configure --enable-lto --shared-zlib --with-intl=small-icu --without-amaro --without-lief --without-npm --without-node-options --without-inspector
           make -j${{ matrix.jobs }}
           strip -x ./out/Release/node
         working-directory: ./node-${{ inputs.node_version }}/
@@ -103,11 +103,11 @@ jobs:
         run: mv ./node-${{ inputs.node_version }}/out/Release/node ./node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
-          name: node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
           path: ./node-${{ inputs.node_version }}-darwin-${{ matrix.arch }}
           if-no-files-found: error
+          archive: false
 
   build_windows:
     strategy:
@@ -139,7 +139,7 @@ jobs:
       - name: Build binary
         run: |
           & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\Tools\Launch-VsDevShell.ps1" -Arch ${{ matrix.vs_arch }}
-          .\vcbuild.bat ${{ matrix.arch }} nonpm ltcg intl-none no-NODE-OPTIONS
+          .\vcbuild.bat ${{ matrix.arch }} nonpm ltcg small-icu no-NODE-OPTIONS
         working-directory: .\node-${{ inputs.node_version }}\
         env:
           config_flags: --without-amaro --without-lief --without-inspector
@@ -148,11 +148,11 @@ jobs:
         run: Move-Item -Path .\node-${{ inputs.node_version }}\out\Release\node.exe -Destination .\node-${{ inputs.node_version }}-win32-${{ matrix.arch }}.exe
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
-          name: node-${{ inputs.node_version }}-win32-${{ matrix.arch }}
           path: .\node-${{ inputs.node_version }}-win32-${{ matrix.arch }}.exe
           if-no-files-found: error
+          archive: false
 
   publish:
     name: Publish binaries to release
@@ -165,14 +165,15 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: ./
           pattern: node-${{ inputs.node_version }}-*
           merge-multiple: true
+          skip-decompress: true
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: ./node-${{ inputs.node_version }}-*
           tag_name: ${{ inputs.node_version }}
